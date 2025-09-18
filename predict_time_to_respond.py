@@ -39,6 +39,10 @@ for col in ['Industry', 'Company_Size', 'Contact_Title', 'Product_Interest', 'Re
 X = data.drop(['Time_to_Respond', 'Opportunity_ID'], axis=1)
 y = data['Time_to_Respond']
 
+# Cast integer columns to float to avoid MLflow schema warning
+for col in X.select_dtypes(include=['int', 'int32', 'int64']).columns:
+    X[col] = X[col].astype(float)
+
 # Step 5: Train-test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -62,7 +66,7 @@ def train_and_log_model(model, model_name, params=None):
         mlflow.log_metric("r2", r2)
         
         # Log the model
-        mlflow.sklearn.log_model(model, "model")
+        mlflow.sklearn.log_model(model, name="model", input_example=X_train.iloc[0:1])
         
         print(f"{model_name} Results:")
         print(f"Mean Squared Error: {mse:.2f}")

@@ -28,6 +28,11 @@ To set up a virtual environment for this project:
    pip install -r requirements.txt
    ```
 
+4. Run the script:
+   ```bash
+   python predict_time_to_respond.py
+   ```
+
 ## Attribution
 
 This project is created and maintained by Clyde Barretto. If you use or reference this work, please attribute it accordingly.
