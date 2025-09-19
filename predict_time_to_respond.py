@@ -17,6 +17,7 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error, r2_score
+from schemas import OpportunityFeatures
 
 # Set MLFlow tracking URI (defaults to local ./mlruns directory)
 mlflow.set_tracking_uri("file:./mlruns")
@@ -87,15 +88,29 @@ elastic_params = {"alpha": 0.1, "l1_ratio": 0.5}
 elastic_model = train_and_log_model(ElasticNet(**elastic_params), "ElasticNet", elastic_params)
 
 # Step 8: Predict a new sample (using one model for demo; you can repeat for others)
-new_sample = pd.DataFrame([{
-    'Industry': label_encoders['Industry'].transform(['Finance'])[0],
-    'Company_Size': label_encoders['Company_Size'].transform(['Medium'])[0],
-    'Contact_Title': label_encoders['Contact_Title'].transform(['Risk Manager'])[0],
+raw_sample = {
+    'Industry': 'Finance',
+    'Company_Size': 'Medium',
+    'Contact_Title': 'Risk Manager',
     'Engagement_Score': 70,
-    'Product_Interest': label_encoders['Product_Interest'].transform(['Risk Analytics'])[0],
-    'Region': label_encoders['Region'].transform(['West'])[0],
-    'Prior_Deals': label_encoders['Prior_Deals'].transform(['Yes'])[0],
+    'Product_Interest': 'Risk Analytics',
+    'Region': 'West',
+    'Prior_Deals': 'Yes',
     'Is_Good_Opportunity': 1
+}
+
+# Validate and parse with Pydantic
+sample = OpportunityFeatures(**raw_sample)
+
+new_sample = pd.DataFrame([{  # Use validated sample
+    'Industry': label_encoders['Industry'].transform([sample.Industry])[0],
+    'Company_Size': label_encoders['Company_Size'].transform([sample.Company_Size])[0],
+    'Contact_Title': label_encoders['Contact_Title'].transform([sample.Contact_Title])[0],
+    'Engagement_Score': float(sample.Engagement_Score),
+    'Product_Interest': label_encoders['Product_Interest'].transform([sample.Product_Interest])[0],
+    'Region': label_encoders['Region'].transform([sample.Region])[0],
+    'Prior_Deals': label_encoders['Prior_Deals'].transform([sample.Prior_Deals])[0],
+    'Is_Good_Opportunity': float(sample.Is_Good_Opportunity)
 }])
 predicted_time = max(0, linear_model.predict(new_sample)[0])
 print(f"Predicted Time to Respond (Linear): {predicted_time:.2f} hours")

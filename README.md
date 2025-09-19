@@ -64,6 +64,15 @@ This project uses [MLflow](https://mlflow.org/) to track experiments and model r
 3. **(Optional) Clean up runs**
    - You can safely delete the `mlruns/` directory to remove all run history.
 
+### Advanced MLflow Tips
+
+- **Log additional artifacts**: You can log plots, data files, or any output using `mlflow.log_artifact()`.
+- **Log model parameters and metrics**: Use `mlflow.log_param()` and `mlflow.log_metric()` to track hyperparameters and results.
+- **Use remote tracking servers**: Configure MLflow to log runs to a remote server or database for team collaboration.
+- **Register and serve models**: Use the MLflow Model Registry to manage model versions and deploy models as REST APIs.
+- **Compare runs**: In the MLflow UI, select multiple runs to compare metrics, parameters, and artifacts side by side.
+- **Integrate with CI/CD**: Automate experiment tracking and model deployment as part of your development workflow.
+
 For more advanced usage, see the [MLflow documentation](https://mlflow.org/docs/latest/index.html).
 
 ## Attribution
