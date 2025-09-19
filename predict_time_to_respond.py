@@ -67,7 +67,11 @@ def train_and_log_model(model, model_name, params=None):
         mlflow.log_metric("r2", r2)
         
         # Log the model
-        mlflow.sklearn.log_model(model, name="model", input_example=X_train.iloc[0:1])
+        mlflow.sklearn.log_model(
+            model,
+            artifact_path="model",
+            registered_model_name="MyModelTimeToRespond"  # Registers or updates model in MLflow Model Registry
+        )
         
         print(f"{model_name} Results:")
         print(f"Mean Squared Error: {mse:.2f}")
